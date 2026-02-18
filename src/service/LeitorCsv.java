@@ -15,6 +15,8 @@ public class LeitorCsv {
 
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
+    private String caminho = "data/operacoes.csv";
+
 
     /**
      *
