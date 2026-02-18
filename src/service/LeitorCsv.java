@@ -95,4 +95,12 @@ public class LeitorCsv {
 
         return dataHoraStr;
     }
+
+    public List<Conta> ordenarPorDataHora( List<Conta> operacoes ) {
+        List<Conta> operacoesOrdenadas = new ArrayList<>( operacoes );
+        operacoesOrdenadas.sort( ( c1, c2) -> c1.getDataHora().
+                compareTo( c2.getDataHora() ) );
+
+        return operacoesOrdenadas;
+    }
 }

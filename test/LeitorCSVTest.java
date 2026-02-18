@@ -1,7 +1,6 @@
 import model.Conta;
 import service.LeitorCsv;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LeitorCSVTest {
@@ -14,7 +13,12 @@ public class LeitorCSVTest {
 
         List<Conta> operacoes = leitor.lerArquivo( caminho );
 
+        System.out.println( "Operações lidas sem ordenação.");
         exibirOperacoes(operacoes);
+
+        List<Conta> operacoesOrdenadas = leitor.ordenarPorDataHora( operacoes );
+        System.out.println( "Operações ordenadas." );
+        exibirOperacoes(operacoesOrdenadas);
 
 
     }
