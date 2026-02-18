@@ -55,11 +55,13 @@ public class Conta {
                 agencia, conta1.agencia) &&
                 Objects.equals(conta, conta1.conta) &&
                 Objects.equals(banco, conta1.banco) &&
-                Objects.equals(Titular, conta1.Titular);
+                Objects.equals(Titular, conta1.Titular) &&
+                Objects.equals(TipoOperacao, conta1.TipoOperacao) &&
+                Objects.equals(dataHora, conta1.dataHora);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(agencia, conta, banco, Titular);
+        return Objects.hash(agencia, conta, banco, Titular, TipoOperacao, dataHora);
     }
 }

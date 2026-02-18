@@ -1,7 +1,6 @@
 import model.Conta;
 import service.LeitorCsv;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LeitorCSVTest {
@@ -20,6 +19,10 @@ public class LeitorCSVTest {
         List<Conta> operacoesOrdenadas = leitor.ordenarPorDataHora( operacoes );
         System.out.println( "Operações ordenadas." );
         exibirOperacoes(operacoesOrdenadas);
+
+        List<Conta> operacoesSemDuplicata = leitor.removerDuplicata( operacoesOrdenadas );
+        System.out.println( "Operações sem duplicata." );
+        exibirOperacoes( operacoesSemDuplicata );
 
 
     }

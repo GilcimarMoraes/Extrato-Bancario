@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public class LeitorCsv {
@@ -104,5 +105,9 @@ public class LeitorCsv {
                 compareTo( c2.getDataHora() ) );
 
         return operacoesOrdenadas;
+    }
+
+    public List<Conta> removerDuplicata(  List<Conta> operacoes ) {
+        return new ArrayList<>( new LinkedHashSet<>( operacoes ) );
     }
 }
