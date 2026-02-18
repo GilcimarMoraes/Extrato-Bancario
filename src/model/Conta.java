@@ -1,6 +1,6 @@
 package model;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Conta {
@@ -9,25 +9,17 @@ public class Conta {
     private String conta;
     private String banco;
     private String Titular;
-    private String tipoOperacao;
-    private BigDecimal saldo;
+    private String TipoOperacao;
+    private LocalDateTime dataHora;
 
     public Conta( String agencia, String conta, String banco,
-                  String Titular, String tipoOperacao, BigDecimal saldo) {
+                  String Titular, String TipoOperacao, LocalDateTime dataHora) {
         this.agencia = agencia;
         this.conta = conta;
         this.banco = banco;
         this.Titular = Titular;
-        this.tipoOperacao = tipoOperacao;
-        this.saldo = BigDecimal.ZERO;
-    }
-
-    public void depositar( BigDecimal valor ) {
-        this.saldo = this.saldo.add(valor);
-    }
-
-    public void sacar( BigDecimal valor ) {
-        this.saldo = this.saldo.subtract(valor);
+        this.TipoOperacao = TipoOperacao;
+        this.dataHora = dataHora;;
     }
 
     public String getAgencia() {
@@ -42,17 +34,18 @@ public class Conta {
         return banco;
     }
 
+    public String getTipoOperacao() {
+        return TipoOperacao;
+    }
+
+    public LocalDateTime getDataHora() {
+        return dataHora;
+    }
+
     public String getTitular() {
         return Titular;
     }
 
-    public String getTipoOperacao() {
-        return tipoOperacao;
-    }
-
-    public BigDecimal getSaldo() {
-        return saldo;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -62,13 +55,11 @@ public class Conta {
                 agencia, conta1.agencia) &&
                 Objects.equals(conta, conta1.conta) &&
                 Objects.equals(banco, conta1.banco) &&
-                Objects.equals(Titular, conta1.Titular) &&
-                Objects.equals(tipoOperacao, conta1.tipoOperacao) &&
-                Objects.equals(saldo, conta1.saldo);
+                Objects.equals(Titular, conta1.Titular);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(agencia, conta, banco, Titular, tipoOperacao, saldo);
+        return Objects.hash(agencia, conta, banco, Titular);
     }
 }
