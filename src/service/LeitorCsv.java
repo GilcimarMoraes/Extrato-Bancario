@@ -16,7 +16,13 @@ public class LeitorCsv {
 
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
+    private static final int TAMANHO_CORRETO_DATA = 19;
+
     private String caminho = "data/operacoes.csv";
+
+    private int linhasProcessadas = 0;
+    private int linhasComErro = 0;
+    private List<String> errosDetalhados = new ArrayList<>();
 
 
     /**
@@ -29,26 +35,37 @@ public class LeitorCsv {
         List<Conta> operacoes = new ArrayList<>();
         String linha;
         boolean primeiraLinha = true;
+        int numeroLinha = 0;
 
         try(BufferedReader br = new BufferedReader(new FileReader(caminho))) {
             System.out.println( "Lendo arquivo ...\n");
 
             while( (linha = br.readLine() ) != null ) {
+                numeroLinha ++;
+
                 if( primeiraLinha ) {
                     primeiraLinha = false;
                     continue;
                 }
 
+                linhasProcessadas++;
+
                 try{
-                    Conta operacao = processarLinha( linha );
+                    Conta operacao = processarLinha( linha, numeroLinha );
                     if( operacao != null ) {
                         operacoes.add( operacao );
                     }
                 } catch ( Exception e) {
-                    System.err.println( "Erro ao processar linha." + linha );
-                    System.err.println( "Erro: " + e.getMessage() );
+                    linhasComErro++;
+                    String erro = String.format( "Linha %d: %s - Erro: %s",
+                            numeroLinha, caminho, e.getMessage() );
+                    errosDetalhados.add( erro );
+                    System.err.println( erro );
                 }
             }
+
+            exibirRelatorio();
+
         } catch( IOException e) {
             System.err.println( "Erro ao ler arquivo: " + e.getMessage() );
             e.printStackTrace();
@@ -58,11 +75,15 @@ public class LeitorCsv {
 
     }
 
-    private Conta processarLinha( String linha) {
+    private Conta processarLinha( String linha, int numeroLinha) throws IllegalArgumentException {
+        if( linha == null ) {
+            throw new IllegalArgumentException( "Linha vazia." );
+        }
+
         String[] campos = linha.split(",");
         if( campos.length < 6 ) {
-            System.err.println( "Linha com número insuficiente de campos." + linha );
-            return null;
+            throw new IllegalArgumentException( "Número insuficiente de campos. Esperado: 6, " +
+                    "encontrado: " + campos.length );
         }
 
         String agencia =  campos[0].trim();
@@ -72,31 +93,45 @@ public class LeitorCsv {
         String operacao =  campos[4].trim();
         String dataHoraStr =  campos[5].trim();
 
-        dataHoraStr = corrigirFormatatoDataHora( dataHoraStr );
-
-        try {
-            LocalDateTime dataHora = LocalDateTime.parse( dataHoraStr, FORMATADOR_DATA );
-            return new Conta( agencia, conta, banco, titular, operacao, dataHora);
-        } catch( DateTimeParseException e ) {
-            System.err.println( "Erro ao parsear dat: " + dataHoraStr );
-            System.err.println( "Linha original: " + linha );
-            return null;
+        if( agencia.isEmpty() || conta.isEmpty() || banco.isEmpty() ||
+                titular.isEmpty() || operacao.isEmpty() || dataHoraStr.isEmpty() ) {
+            throw new IllegalArgumentException( "Campo(s) vazio(s) ou nao encontrado(s).");
         }
+
+        if( !operacao.equals( "SAQUE" ) && !operacao.equals( "DEPOSITO" ) ) {
+            throw new IllegalArgumentException( "Operação inválida: " + operacao +". " +
+                    "Deve ser SAQUE ou DEPOSITO." );
+        }
+
+        if( dataHoraStr.length() != TAMANHO_CORRETO_DATA ) {
+            throw new IllegalArgumentException( "Data/Hora com formato incorreto. Tamanho" +
+                    "esperado: " + TAMANHO_CORRETO_DATA + ". Número de caracteres, encontrados: " +
+                    dataHoraStr.length() + ". Valor: " + dataHoraStr );
+        }
+
+        LocalDateTime dataHora;
+        try {
+            dataHora = LocalDateTime.parse( dataHoraStr, FORMATADOR_DATA );
+        } catch( DateTimeParseException e ) {
+            throw new IllegalArgumentException( "Data/Hora em formato inválido: " +  dataHoraStr +
+                    ". Formato esperado: yyyy-MM-ddTHH:mm:ss" );
+        }
+
+        return new Conta(agencia, conta, banco, titular, operacao, dataHora);
     }
 
-    private String corrigirFormatatoDataHora( String dataHoraStr ) {
-        if( dataHoraStr.contains("T0") && dataHoraStr.length() > 19 ) {
-            String[] partes = dataHoraStr.split("T");
-            if( partes.length == 2 ) {
-                String horaParte = partes[1];
-                if( horaParte.length() > 8 && horaParte.charAt(0) == '0' &&
-                horaParte.charAt(1) == '1' && horaParte.charAt(2) == '1' ) {
-                    dataHoraStr = partes[0] + "T" + horaParte.substring( 1 );
-                }
+    private void exibirRelatorio() {
+        System.out.println( "\n === RELATÓRIO DE PROCESSAMENTO ===" );
+        System.out.println( "Linhas Processadas: " + linhasProcessadas );
+        System.out.println( "Linhas Com Erro: " + linhasComErro );
+        System.out.println( "Operações válidas: " + (linhasProcessadas - linhasComErro) );
+
+        if( !errosDetalhados.isEmpty() ) {
+            System.out.println( "\nErros encontrados: ");
+            for( String erro : errosDetalhados ) {
+                System.out.println( " " + erro );
             }
         }
-
-        return dataHoraStr;
     }
 
     public List<Conta> ordenarPorDataHora( List<Conta> operacoes ) {

@@ -14,15 +14,16 @@ public class LeitorCSVTest {
         List<Conta> operacoes = leitor.lerArquivo( caminho );
 
         System.out.println( "Operações lidas sem ordenação.");
-        exibirOperacoes(operacoes);
+        //exibirOperacoes(operacoes);
 
         List<Conta> operacoesOrdenadas = leitor.ordenarPorDataHora( operacoes );
         System.out.println( "Operações ordenadas." );
-        exibirOperacoes(operacoesOrdenadas);
+        //exibirOperacoes(operacoesOrdenadas);
 
         List<Conta> operacoesSemDuplicata = leitor.removerDuplicata( operacoesOrdenadas );
         System.out.println( "Operações sem duplicata." );
         exibirOperacoes( operacoesSemDuplicata );
+
 
 
     }
