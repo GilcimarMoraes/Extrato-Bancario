@@ -4,6 +4,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Representa uma conta bancária e suas operações (transações).
+ * Cada instância desta classe corresponde a uma operação específica
+ * (saque ou depósito) realizada em uma conta.
+ *
+ * @author Gilcimar Matias
+ * @version 1.0
+ */
+
 public class Conta {
 
     private String agencia;
