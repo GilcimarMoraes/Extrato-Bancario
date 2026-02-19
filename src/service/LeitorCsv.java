@@ -5,6 +5,7 @@ import model.Conta;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -81,8 +82,8 @@ public class LeitorCsv {
         }
 
         String[] campos = linha.split(",");
-        if( campos.length < 6 ) {
-            throw new IllegalArgumentException( "Número insuficiente de campos. Esperado: 6, " +
+        if( campos.length < 7 ) {
+            throw new IllegalArgumentException( "Número insuficiente de campos. Esperado: 7, " +
                     "encontrado: " + campos.length );
         }
 
@@ -92,9 +93,11 @@ public class LeitorCsv {
         String titular =   campos[3].trim();
         String operacao =  campos[4].trim();
         String dataHoraStr =  campos[5].trim();
+        String valorStr =  campos[6].trim();
 
         if( agencia.isEmpty() || conta.isEmpty() || banco.isEmpty() ||
-                titular.isEmpty() || operacao.isEmpty() || dataHoraStr.isEmpty() ) {
+                titular.isEmpty() || operacao.isEmpty() ||
+                dataHoraStr.isEmpty() || valorStr.isEmpty() ) {
             throw new IllegalArgumentException( "Campo(s) vazio(s) ou nao encontrado(s).");
         }
 
@@ -117,7 +120,17 @@ public class LeitorCsv {
                     ". Formato esperado: yyyy-MM-ddTHH:mm:ss" );
         }
 
-        return new Conta(agencia, conta, banco, titular, operacao, dataHora);
+        BigDecimal valor;
+        try {
+            valor = new BigDecimal( valorStr );
+            if( valor.compareTo( BigDecimal.ZERO ) <= 0 ) {
+                throw new IllegalArgumentException( "Valor deve ser positivo: " + valorStr );
+            }
+        } catch ( NumberFormatException e ) {
+            throw new IllegalArgumentException( "Valor inválido: " + valorStr );
+        }
+
+        return new Conta( agencia, conta, banco, titular, operacao, dataHora, valor );
     }
 
     private void exibirRelatorio() {
