@@ -4,7 +4,22 @@ import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
+/**
+* Classe responsável por processar e calcular os saldos das contas bancárias
+ * a partir de uma lista de operações. Gerencia o histórico de transações,
+ * valida saques com base no saldo disponível e gera extratos detalhados.
+ *
+ * @author Gilcimar Matias
+ * @version 1.0
+ */
+
 public class CalcularSaldoConta {
+
+    /**
+     * Classe interna que representa o estado atual de uma conta bancária,
+     * incluindo saldo, histórico de operações e operações rejeitadas.
+     */
 
     public static class SaldoConta {
         private String agencia;
@@ -24,6 +39,14 @@ public class CalcularSaldoConta {
             this.operacoes = new ArrayList<>();
             this.operacoesRejeitadas = new ArrayList<>();
         }
+
+        /**
+         * Adiciona uma operação à conta, atualizando o saldo se for um depósito
+         * ou validando o saldo disponível se for um saque.
+         *
+         * @param operacao Operação a ser processada
+         * @return true se a operação foi aceita, false se foi rejeitada (saque sem saldo)
+         */
 
         public boolean adicionarOperacao( Conta operacao ) {
             if( operacao.getTipoOperacao().equals( "DEPOSITO" ) ) {
@@ -85,6 +108,15 @@ public class CalcularSaldoConta {
         public boolean hasOperacoesRejeitadas() { return !operacoesRejeitadas.isEmpty(); }
     }
 
+    /**
+     * Processa uma lista de operações e calcula os saldos finais de cada conta.
+     * As operações são processadas em ordem cronológica para garantir a
+     * correta validação dos saques.
+     *
+     * @param operacoes Lista de operações a serem processadas
+     * @return Mapa contendo o saldo final de cada conta (chave = agencia-conta-banco)
+     */
+
     public Map<String, SaldoConta> calcularSaldos( List<Conta> operacoes ) {
         List<Conta> operacoesOrdenadas = new ArrayList<>( operacoes);
         operacoesOrdenadas.sort( Comparator.comparing(Conta::getDataHora) );
@@ -134,11 +166,24 @@ public class CalcularSaldoConta {
         return saldos;
     }
 
+    /**
+     * Gera uma chave única para identificar uma conta.
+     *
+     * @param conta Objeto Conta
+     * @return String no formato "agencia-conta-banco"
+     */
+
     private String gerarChaveConta( Conta conta ) {
         return conta.getAgencia() + "-" + conta.getConta() + "-" + conta.getBanco();
     }
 
-    // Exibir extrato completo
+    /**
+     * Exibe um extrato completo com todas as operações e saldos parciais
+     * de cada conta, incluindo operações rejeitadas.
+     *
+     * @param saldos Mapa com os saldos calculados
+     */
+
     public void exibirExtratoCompleto( Map<String, SaldoConta> saldos ) {
         System.out.println( "\n" + "=".repeat( 80 ) );
         System.out.println( "EXTRATO BANCÁRIO - SALDO FINAL DA CONTA");
@@ -209,7 +254,12 @@ public class CalcularSaldoConta {
         System.out.println("=".repeat(100));
     }
 
-    // Extrato Resumido
+    /**
+     * Exibe um resumo com apenas os saldos finais de cada conta.
+     *
+     * @param saldos Mapa com os saldos calculados
+     */
+
     public void exibirSaldoResumido( Map<String, SaldoConta> saldos ) {
         System.out.println( "\n".repeat( 80 ) );
         System.out.println( "SALDOS FINAIS POR CONTA");

@@ -13,6 +13,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+/**
+ * Classe responsável pela leitura e processamento de arquivos CSV
+ * contendo operações bancárias. Realiza validações de formato,
+ * conversão de tipos e remove operações duplicadas.
+ *
+ * @author Gilcimar Matias
+ * @version 1.0
+ */
+
+
 public class LeitorCsv {
 
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -25,11 +35,13 @@ public class LeitorCsv {
     private int linhasComErro = 0;
     private List<String> errosDetalhados = new ArrayList<>();
 
-
     /**
+     * Lê um arquivo CSV e converte suas linhas em objetos Conta.
+     * Realiza validações de formato e conteúdo, gerando relatório
+     * de erros ao final do processamento.
      *
-     * @param caminho
-     * @return
+     * @param caminho Caminho completo para o arquivo CSV
+     * @return Lista de operações válidas lidas do arquivo
      */
 
     public List<Conta>  lerArquivo( String caminho) {
@@ -75,6 +87,16 @@ public class LeitorCsv {
         return operacoes;
 
     }
+
+    /**
+     * Processa uma linha individual do CSV, validando e convertendo
+     * seus campos em um objeto Conta.
+     *
+     * @param linha Linha do arquivo CSV
+     * @param numeroLinha Número da linha para referência em erros
+     * @return Objeto Conta criado a partir da linha
+     * @throws IllegalArgumentException Se a linha tiver dados inválidos
+     */
 
     private Conta processarLinha( String linha, int numeroLinha) throws IllegalArgumentException {
         if( linha == null ) {
@@ -133,6 +155,10 @@ public class LeitorCsv {
         return new Conta( agencia, conta, banco, titular, operacao, dataHora, valor );
     }
 
+    /**
+     * Exibe um relatório com estatísticas do processamento do arquivo.
+     */
+
     private void exibirRelatorio() {
         System.out.println( "\n === RELATÓRIO DE PROCESSAMENTO ===" );
         System.out.println( "Linhas Processadas: " + linhasProcessadas );
@@ -147,6 +173,13 @@ public class LeitorCsv {
         }
     }
 
+    /**
+     * Ordena uma lista de operações por data e hora.
+     *
+     * @param operacoes Lista de operações a ser ordenada
+     * @return Nova lista contendo as operações em ordem cronológica
+     */
+
     public List<Conta> ordenarPorDataHora( List<Conta> operacoes ) {
         List<Conta> operacoesOrdenadas = new ArrayList<>( operacoes );
         operacoesOrdenadas.sort( ( c1, c2) -> c1.getDataHora().
@@ -154,6 +187,15 @@ public class LeitorCsv {
 
         return operacoesOrdenadas;
     }
+
+    /**
+     * Remove operações duplicadas de uma lista, mantendo a ordem original.
+     * Duas operações são consideradas duplicadas se possuem os mesmos
+     * dados de conta, tipo, data/hora e valor.
+     *
+     * @param operacoes Lista de operações
+     * @return Nova lista contendo apenas operações únicas
+     */
 
     public List<Conta> removerDuplicata(  List<Conta> operacoes ) {
         return new ArrayList<>( new LinkedHashSet<>( operacoes ) );
