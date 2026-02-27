@@ -118,49 +118,18 @@ public class CalcularSaldoConta {
      */
 
     public Map<String, SaldoConta> calcularSaldos( List<Conta> operacoes ) {
-        List<Conta> operacoesOrdenadas = new ArrayList<>( operacoes);
-        operacoesOrdenadas.sort( Comparator.comparing(Conta::getDataHora) );
+        List<Conta> operacoesOrdenadas = new ArrayList<>(operacoes);
+        operacoesOrdenadas.sort(Comparator.comparing(Conta::getDataHora));
 
-        Map<String, SaldoConta> saldos = new HashMap<>();
-        Map<String, List<String>> errosPorConta = new HashMap<>();
+        Map<String, SaldoConta> saldos = new LinkedHashMap<>();
 
-        for( Conta op : operacoes ) {
-            String chave = gerarChaveConta( op );
 
-            SaldoConta saldoConta = saldos.get( chave );
-            if( saldoConta == null ) {
-                saldoConta = new SaldoConta(
-                        op.getAgencia(),
-                        op.getConta(),
-                        op.getBanco(),
-                        op.getTitular()
-                );
-                saldos.put( chave, saldoConta );
-            }
+        for (Conta op : operacoesOrdenadas) {
+            String chave = gerarChaveConta(op);
 
-            boolean operacaoAceita = saldoConta.adicionarOperacao( op );
-
-            if( !operacaoAceita ) {
-                errosPorConta.computeIfAbsent( chave, k -> new ArrayList<>() )
-                        .add( String.format( "Linha com SAQUE de R$ %.2f em %s rejeitado - " +
-                                "saldo insuficiente",
-                                op.getValor(),
-                                op.getDataHora() ) );
-            }
-        }
-
-        // Alerta de operações rejeitadas
-        if( !errosPorConta.isEmpty() ) {
-            System.out.println( "\n" + "!".repeat( 80 ) );
-            System.out.println( "ALERTAS DE OPERAÇÕES REJEITADAS" );
-            System.out.println( "!".repeat( 80 ) );
-
-            for( Map.Entry<String, List<String>> entry : errosPorConta.entrySet() ) {
-                System.out.println( "Conta: " + entry.getKey());
-                for( String erro : entry.getValue() ) {
-                    System.out.println( "  - " + erro );
-                }
-            }
+            saldos.computeIfAbsent(chave, k ->
+                    new SaldoConta(op.getAgencia(), op.getConta(), op.getBanco(), op.getTitular())
+            ).adicionarOperacao(op);
         }
 
         return saldos;
@@ -225,7 +194,7 @@ public class CalcularSaldoConta {
                 } else {
                     saldoParcial = saldoParcial.subtract(op.getValor());
 
-                    System.out.printf( " %s | %-8s | R$ %10.2f | %s\n",
+                    System.out.printf( " %s | %-8s | R$ %10.2f | Saldo: R$ %-10.2f | %s\n",
                             op.getDataHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss" ) ),
                             op.getTipoOperacao(),
                             op.getValor(),
@@ -276,7 +245,7 @@ public class CalcularSaldoConta {
             if( sc.hasOperacoesRejeitadas() ) {
                 totalOperacoesComRejeicao++;
             }
-            System.out.printf( "%-10s | Ag: %-4s | Conta: %-4s | Banco: %-9s | Saldo: R$ %10.2f\n",
+            System.out.printf( "%-10s | Ag: %-4s | Conta: %-4s | Banco: %-9s | Saldo: R$ %10.2f%s\n",
                     sc.getTitular(),
                     sc.getAgencia(),
                     sc.getConta(),

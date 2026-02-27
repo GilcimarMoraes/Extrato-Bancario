@@ -28,7 +28,7 @@ public class LeitorCSVTest {
         List<Conta> operacoesOrdenadas = leitor.ordenarPorDataHora( operacoes );
 
         // Eliminar duplicatas
-        List<Conta> operacoesUnicas = leitor.removerDuplicata( operacoesOrdenadas );
+        List<Conta> operacoesUnicas = leitor.removerDuplicatas( operacoesOrdenadas );
 
         System.out.println( "Operações após remover duplicatas: " + operacoesUnicas.size() );
 
