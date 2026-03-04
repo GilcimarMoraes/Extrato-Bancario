@@ -1,76 +1,44 @@
-import model.CalcularSaldoConta;
-import model.Conta;
+import model.Transacao;
+import service.CalcularSaldoConta;
 import service.LeitorCsv;
 
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Classe de teste para validar o fluxo completo:
+ * leitura do CSV → deduplicação → cálculo de saldos → exibição.
+ *
+ * @author Gilcimar Matias
+ * @version 2.0
+ */
 public class LeitorCSVTest {
 
-    public static void main() {
+    public static void main(String[] args) {
 
-        LeitorCsv leitor =  new LeitorCsv();
-        CalcularSaldoConta calc = new CalcularSaldoConta();
+        String caminho = args.length > 0 ? args[0] : "data/operacoes.csv";
 
-        String caminho = "data/operacoes.csv";
+        long inicio = System.currentTimeMillis();
 
-        List<Conta> operacoes = leitor.lerArquivo( caminho );
+        // 1. Leitura do CSV (já deduplica internamente via HashSet)
+        LeitorCsv leitor = new LeitorCsv();
+        List<Transacao> transacoes = leitor.lerArquivo(caminho);
 
-        if( operacoes.isEmpty() ) {
-            System.out.println( "Nenhuma operação válida encontrada" );
+        if (transacoes.isEmpty()) {
+            System.out.println("Nenhuma operação válida encontrada.");
             return;
         }
 
-        System.out.println( "Operações válidas carregadas" + operacoes.size() );
+        System.out.println("Operações válidas carregadas: " + transacoes.size());
 
-        // Ordenar por data e hora
-        List<Conta> operacoesOrdenadas = leitor.ordenarPorDataHora( operacoes );
+        // 2. Calcular saldos (já ordena internamente por data/hora)
+        CalcularSaldoConta calc = new CalcularSaldoConta();
+        Map<String, CalcularSaldoConta.SaldoConta> saldos = calc.calcularSaldos(transacoes);
 
-        // Eliminar duplicatas
-        List<Conta> operacoesUnicas = leitor.removerDuplicatas( operacoesOrdenadas );
+        // 3. Exibir extrato
+        calc.exibirExtratoCompleto(saldos);
 
-        System.out.println( "Operações após remover duplicatas: " + operacoesUnicas.size() );
-
-        //Calcular Saldos
-        Map<String, CalcularSaldoConta.SaldoConta> saldos = calc.calcularSaldos( operacoesUnicas );
-
-        // Formatos de Extrato
-        calc.exibirExtratoCompleto( saldos );
-        //calc.exibirSaldoResumido( saldos );
-
-
-        /*
-        // Exibir os resultados
-        System.out.println( "\n" + "#".repeat( 80 ) );
-        System.out.println( "PROCESSAMENTO CONCLUÍDO" );
-        System.out.println( "#".repeat( 80 ) );
-
-        System.out.println( "Operações lidas sem ordenação.");
-        //exibirOperacoes(operacoes);
-
-        List<Conta> operacoesOrdenadas = leitor.ordenarPorDataHora( operacoes );
-        System.out.println( "Operações ordenadas." );
-        //exibirOperacoes(operacoesOrdenadas);
-
-        List<Conta> operacoesSemDuplicata = leitor.removerDuplicata( operacoesOrdenadas );
-        System.out.println( "Operações sem duplicata." );
-        exibirOperacoes( operacoesSemDuplicata );
-
-*/
+        long fim = System.currentTimeMillis();
+        System.out.printf("%nTempo de execução: %.2f segundos%n", (fim - inicio) / 1000.0);
     }
-/*
-    private static void exibirOperacoes(List<Conta> operacoes) {
-        for (Conta conta : operacoes) {
-            System.out.printf("Titular: %-8s | Ag: %-6s | Conta: %-6s | Banco: %-10s | Operação: %-8s | Data/Hora: %s%n",
-                    conta.getTitular(),
-                    conta.getAgencia(),
-                    conta.getConta(),
-                    conta.getBanco(),
-                    conta.getTipoOperacao(),
-                    conta.getDataHora());
-        }
-    }
-
- */
 }

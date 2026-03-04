@@ -1,6 +1,6 @@
 package service;
 
-import model.Conta;
+import model.Transacao;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,10 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Classe responsável pela leitura e processamento de arquivos CSV
@@ -40,8 +37,8 @@ public class LeitorCsv {
      * @param caminho Caminho completo para o arquivo CSV
      * @return Lista de operações válidas e sem duplicatas
      */
-    public List<Conta> lerArquivo(String caminho) {
-        // Buffer de 1MB para melhor performance com arquivos grandes
+    public List<Transacao> lerArquivo(String caminho) {
+
         try (BufferedReader br = new BufferedReader(new FileReader(caminho), 1024 * 1024)) {
 
             String header = br.readLine();
@@ -50,8 +47,7 @@ public class LeitorCsv {
             System.out.println("Lendo arquivo...");
             System.out.println("Coluna VALOR detectada: " + temColunaValor);
 
-            // LinkedHashSet já deduplica na leitura, sem lista intermediária
-            LinkedHashSet<Conta> conjunto = new LinkedHashSet<>();
+            HashSet<Transacao> conjunto = new HashSet<>();
             String linha;
             int numeroLinha = 1;
 
@@ -59,7 +55,7 @@ public class LeitorCsv {
                 numeroLinha++;
                 linhasProcessadas++;
                 try {
-                    Conta op = processarLinha(linha, numeroLinha, temColunaValor);
+                    Transacao op = processarLinha(linha, numeroLinha, temColunaValor);
                     if (op != null) {
                         boolean nova = conjunto.add(op);
                         if (!nova) duplicatasRemovidas++;
@@ -90,7 +86,7 @@ public class LeitorCsv {
      * @return Objeto Conta criado a partir da linha
      * @throws IllegalArgumentException Se a linha tiver dados inválidos
      */
-    private Conta processarLinha(String linha, int numeroLinha, boolean temColunaValor) {
+    private Transacao processarLinha(String linha, int numeroLinha, boolean temColunaValor) {
         if (linha == null || linha.isBlank()) {
             throw new IllegalArgumentException("Linha vazia.");
         }
@@ -159,7 +155,7 @@ public class LeitorCsv {
             valor = BigDecimal.ONE; // valor padrão quando coluna não existe
         }
 
-        return new Conta(agencia, conta, banco, titular, operacao, dataHora, valor);
+        return new Transacao(agencia, conta, banco, titular, operacao, dataHora, valor);
     }
 
     /**
@@ -178,21 +174,5 @@ public class LeitorCsv {
                 System.out.println("  " + erro);
             }
         }
-    }
-
-    /**
-     * Ordena uma lista de operações por data e hora.
-     */
-    public List<Conta> ordenarPorDataHora(List<Conta> operacoes) {
-        List<Conta> ordenadas = new ArrayList<>(operacoes);
-        ordenadas.sort(Comparator.comparing(Conta::getDataHora));
-        return ordenadas;
-    }
-
-    /**
-     * Remove duplicatas de uma lista (alternativa ao LinkedHashSet na leitura).
-     */
-    public List<Conta> removerDuplicatas(List<Conta> operacoes) {
-        return new ArrayList<>(new LinkedHashSet<>(operacoes));
     }
 }
