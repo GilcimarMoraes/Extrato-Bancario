@@ -1,5 +1,5 @@
 import model.Transacao;
-import service.CalcularSaldoConta;
+import service.SaldoService;
 import service.LeitorCsv;
 
 import java.util.List;
@@ -32,8 +32,8 @@ public class LeitorCSVTest {
         System.out.println("Operações válidas carregadas: " + transacoes.size());
 
         // 2. Calcular saldos (já ordena internamente por data/hora)
-        CalcularSaldoConta calc = new CalcularSaldoConta();
-        Map<String, CalcularSaldoConta.SaldoConta> saldos = calc.calcularSaldos(transacoes);
+        SaldoService calc = new SaldoService();
+        Map<String, SaldoService.SaldoConta> saldos = calc.calcularSaldos(transacoes);
 
         // 3. Exibir extrato
         calc.exibirExtratoCompleto(saldos);

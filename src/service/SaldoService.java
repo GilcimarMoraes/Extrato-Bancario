@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * @author Gilcimar Matias
  * @version 2.0
  */
-public class CalcularSaldoConta {
+public class SaldoService {
 
     /**
      * Classe interna que representa o estado atual de uma conta bancária,
