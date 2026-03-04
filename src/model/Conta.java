@@ -65,17 +65,17 @@ public class Conta {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Conta conta1 = (Conta) o;
-        return Objects.equals(
-                agencia, conta1.agencia) &&
-                Objects.equals(conta, conta1.conta) &&
-                Objects.equals(banco, conta1.banco) &&
-                Objects.equals(titular, conta1.titular) &&
-                Objects.equals(tipoOperacao, conta1.tipoOperacao) &&
-                Objects.equals(dataHora, conta1.dataHora);
+        return Objects.equals( agencia, conta1.agencia ) &&
+                Objects.equals( conta, conta1.conta ) &&
+                Objects.equals( banco, conta1.banco ) &&
+                Objects.equals( titular, conta1.titular ) &&
+                Objects.equals( tipoOperacao, conta1.tipoOperacao ) &&
+                Objects.equals( dataHora, conta1.dataHora ) &&
+                Objects.equals( valor, conta1.valor );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(agencia, conta, banco, titular, tipoOperacao, dataHora);
+        return Objects.hash(agencia, conta, banco, titular, tipoOperacao, dataHora, valor);
     }
 }
