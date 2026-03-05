@@ -6,21 +6,20 @@ import java.util.Objects;
 
 /**
  * Representa uma transação (operação) bancária.
- * Cada instância corresponde a uma operação específica
- * (saque ou depósito) realizada em uma conta.
+ * Responsabilidade única: modelo de dados imutável de uma transação.
  *
  * @author Gilcimar Matias
- * @version 2.0
+ * @version 3.0
  */
 public class Transacao {
 
-    private String agencia;
-    private String conta;
-    private String banco;
-    private String titular;
-    private String tipoOperacao;
-    private LocalDateTime dataHora;
-    private BigDecimal valor;
+    private final String agencia;
+    private final String conta;
+    private final String banco;
+    private final String titular;
+    private final String tipoOperacao;
+    private final LocalDateTime dataHora;
+    private final BigDecimal valor;
 
     public Transacao(String agencia, String conta, String banco,
                      String titular, String tipoOperacao, LocalDateTime dataHora, BigDecimal valor) {
@@ -33,33 +32,13 @@ public class Transacao {
         this.valor = valor;
     }
 
-    public String getAgencia() {
-        return agencia;
-    }
-
-    public String getConta() {
-        return conta;
-    }
-
-    public String getBanco() {
-        return banco;
-    }
-
-    public String getTipoOperacao() {
-        return tipoOperacao;
-    }
-
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public String getTitular() {
-        return titular;
-    }
-
-    public BigDecimal getValor() {
-        return valor;
-    }
+    public String getAgencia() { return agencia; }
+    public String getConta() { return conta; }
+    public String getBanco() { return banco; }
+    public String getTitular() { return titular; }
+    public String getTipoOperacao() { return tipoOperacao; }
+    public LocalDateTime getDataHora() { return dataHora; }
+    public BigDecimal getValor() { return valor; }
 
     @Override
     public boolean equals(Object o) {
@@ -82,8 +61,8 @@ public class Transacao {
 
     @Override
     public String toString() {
-        return String.format("Transacao{titular='%s', agencia='%s', conta='%s', banco='%s', " +
-                        "operacao='%s', valor=%s, dataHora=%s}",
+        return String.format("Transacao{titular='%s', ag='%s', conta='%s', banco='%s', " +
+                        "op='%s', valor=%s, dataHora=%s}",
                 titular, agencia, conta, banco, tipoOperacao, valor, dataHora);
     }
 }
