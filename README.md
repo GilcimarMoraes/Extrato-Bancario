@@ -16,10 +16,10 @@ Sistema em Java para leitura, validação e processamento de transações bancá
 - ✅ Relatório de erros e estatísticas de processamento
 
 src/
-├── model/
-│ ├── Transacao.java → Modelo imutável de uma transação
-│ ├── SaldoConta.java → Estado da conta (saldo + histórico)
-│ └── ResultadoValidacao.java → Encapsula válidas + erros da validação
+|--- model/
+│ |-- Transacao.java → Modelo imutável de uma transação
+│ |-- SaldoConta.java → Estado da conta (saldo + histórico)
+│ |-- ResultadoValidacao.java → Encapsula válidas + erros da validação
 │
 ├── service/
 │ ├── LeitorCsv.java → Leitura do arquivo CSV (I/O puro)
