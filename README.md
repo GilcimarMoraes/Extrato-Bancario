@@ -15,4 +15,3 @@ Sistema em Java para leitura, validação e processamento de transações bancá
 - ✅ Modo resumido para arquivos grandes (+10.000 transações)
 - ✅ Relatório de erros e estatísticas de processamento
 
-<img width="600" height="524" alt="image" src="https://github.com/user-attachments/assets/f03c607e-520b-4215-afb3-1bc761ed42e6" />
